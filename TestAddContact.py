@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
+from contacts import Contacts
+
 
 class TestAddContact(unittest.TestCase):
     def setUp(self):
@@ -16,7 +13,7 @@ class TestAddContact(unittest.TestCase):
         wd = self.wd
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
-        self.create_contact(wd, firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye")
+        self.create_contact(wd, Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
         self.return_home_page(wd)
         self.logout(wd)
 
@@ -26,19 +23,19 @@ class TestAddContact(unittest.TestCase):
     def return_home_page(self, wd):
         wd.find_element_by_link_text("home page").click()
 
-    def create_contact(self, wd, firstname, middlename, lastname, nickname):
+    def create_contact(self, wd, contacts):
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
-        wd.find_element_by_name("firstname").send_keys("%s" % firstname)
+        wd.find_element_by_name("firstname").send_keys(contacts.firstname)
         wd.find_element_by_name("middlename").click()
         wd.find_element_by_name("middlename").clear()
-        wd.find_element_by_name("middlename").send_keys(middlename)
+        wd.find_element_by_name("middlename").send_keys(contacts.middlename)
         wd.find_element_by_name("lastname").click()
         wd.find_element_by_name("lastname").clear()
-        wd.find_element_by_name("lastname").send_keys("%s" % lastname)
+        wd.find_element_by_name("lastname").send_keys(contacts.lastname)
         wd.find_element_by_name("nickname").click()
         wd.find_element_by_name("nickname").clear()
-        wd.find_element_by_name("nickname").send_keys("%s" % nickname)
+        wd.find_element_by_name("nickname").send_keys(contacts.nickname)
         wd.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)='Notes:'])[1]/following::input[1]").click()
 
