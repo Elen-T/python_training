@@ -1,56 +1,21 @@
 # -*- coding: utf-8 -*-
-from selenium import webdriver
-import unittest, time, re
+import pytest
 from contacts import Contacts
+from application2 import Application
 
 
-class TestAddContact(unittest.TestCase):
-    def setUp(self):
-        self.wd = webdriver.Firefox()
-        self.wd.implicitly_wait(30)
-    
-    def test_add_contact(self):
-        wd = self.wd
-        self.open_home_page(wd)
-        self.login(wd, username="admin", password="secret")
-        self.create_contact(wd, Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
-        self.return_home_page(wd)
-        self.logout(wd)
+@pytest.fixture
+def app(request):
+    fixture = Application()
+    request.addfinalizer(fixture.destroy)
+    return fixture
 
-    def logout(self, wd):
-        wd.find_element_by_link_text("Logout").click()
 
-    def return_home_page(self, wd):
-        wd.find_element_by_link_text("home page").click()
+def test_add_contact(app):
+    app.login(username="admin", password="secret")
+    app.create_contact(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
+    app.logout()
 
-    def create_contact(self, wd, contacts):
-        wd.find_element_by_name("firstname").click()
-        wd.find_element_by_name("firstname").clear()
-        wd.find_element_by_name("firstname").send_keys(contacts.firstname)
-        wd.find_element_by_name("middlename").click()
-        wd.find_element_by_name("middlename").clear()
-        wd.find_element_by_name("middlename").send_keys(contacts.middlename)
-        wd.find_element_by_name("lastname").click()
-        wd.find_element_by_name("lastname").clear()
-        wd.find_element_by_name("lastname").send_keys(contacts.lastname)
-        wd.find_element_by_name("nickname").click()
-        wd.find_element_by_name("nickname").clear()
-        wd.find_element_by_name("nickname").send_keys(contacts.nickname)
-        wd.find_element_by_xpath(
-            "(.//*[normalize-space(text()) and normalize-space(.)='Notes:'])[1]/following::input[1]").click()
-
-    def login(self, wd, username, password):
-        wd.find_element_by_name("user").click()
-        wd.find_element_by_name("user").clear()
-        wd.find_element_by_name("user").send_keys(username)
-        wd.find_element_by_name("pass").click()
-        wd.find_element_by_name("pass").clear()
-        wd.find_element_by_name("pass").send_keys(password)
-        wd.find_element_by_xpath(
-            "(.//*[normalize-space(text()) and normalize-space(.)='Password:'])[1]/following::input[2]").click()
-
-    def open_home_page(self, wd):
-        wd.get("http://localhost/addressbook/edit.php")
 
     """def is_element_present(self, how, what):
         try: self.wd.find_element(by=how, value=what)
@@ -72,9 +37,7 @@ class TestAddContact(unittest.TestCase):
                 alert.dismiss()
             return alert_text
         finally: self.accept_next_alert = True"""
-    
-    def tearDown(self):
-        self.wd.quit()
+
 
 if __name__ == "__main__":
     unittest.main()
