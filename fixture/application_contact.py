@@ -49,4 +49,4 @@ class Application:
         wd.get("http://localhost/addressbook/edit.php")
 
     def destroy(self):
-            self.wd.quit()
+        self.wd.quit()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from contacts import Contacts
-from application2 import Application
+from model.contacts import Contacts
+from fixture.application_contact import Application
 
 
 @pytest.fixture
@@ -37,7 +37,3 @@ def test_add_contact(app):
                 alert.dismiss()
             return alert_text
         finally: self.accept_next_alert = True"""
-
-
-if __name__ == "__main__":
-    unittest.main()

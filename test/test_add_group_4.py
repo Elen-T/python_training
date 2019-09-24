@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from group import Group
-from application import Application
+from model.group import Group
+from fixture.application import Application
+
 
 @pytest.fixture
 def app(request):
@@ -15,6 +16,7 @@ def test_add_groupp2(app):
     app.login(username="admin", password="secret")
     app.create_group(Group(name="fgjfgj", header="fgjfgj", footer="fgjfgj"))
     app.logout()
+
 
 def test_add_empty_groupp2(app):
     app.login(username="admin", password="secret")
