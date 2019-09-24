@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from model.contacts import Contacts
-from fixture.application_contact import Application
+from fixture.application import Application
 
 
 @pytest.fixture
@@ -12,9 +12,9 @@ def app(request):
 
 
 def test_add_contact(app):
-    app.login(username="admin", password="secret")
+    app.session.login(username="admin", password="secret")
     app.create_contact(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
-    app.logout()
+    app.session.logout()
 
 
     """def is_element_present(self, how, what):
