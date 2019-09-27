@@ -1,23 +1,14 @@
 # -*- coding: utf-8 -*-
-import pytest
 from model.contacts import Contacts
-from fixture.application import Application
-
-
-@pytest.fixture
-def app(request):
-    fixture = Application()
-    request.addfinalizer(fixture.destroy)
-    return fixture
 
 
 def test_add_contact(app):
-    app.session.login(username="admin", password="secret")
-    app.contact.create(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
-    app.session.logout()
+   app.session.login(username="admin", password="secret")
+   app.contact.create(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
+   app.session.logout()
 
 
-    """def is_element_present(self, how, what):
+   """def is_element_present(self, how, what):
         try: self.wd.find_element(by=how, value=what)
         except NoSuchElementException as e: return False
         return True
