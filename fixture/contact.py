@@ -9,6 +9,7 @@ class ContactHelper:
 
     def edit_first_contact(self):
         wd = self.app.wd
+        wd.find_element_by_link_text("home").click()
         # выбор первого контакта
         wd.find_element_by_name("selected[]").click()
         # нажатие редактировать первого контакта
@@ -20,6 +21,7 @@ class ContactHelper:
 
     def delete_first_contact(self):
         wd = self.app.wd
+        wd.find_element_by_link_text("home").click()
         # выбор первого контакта
         wd.find_element_by_name("selected[]").click()
         # удаление первого контакта
