@@ -9,7 +9,7 @@ class ContactHelper:
 
     def edit_first_contact(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("home").click()
+        self.open_contact_home_page()
         # выбор первого контакта
         wd.find_element_by_name("selected[]").click()
         # нажатие редактировать первого контакта
@@ -21,7 +21,7 @@ class ContactHelper:
 
     def delete_first_contact(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("home").click()
+        self.open_contact_home_page()
         # выбор первого контакта
         wd.find_element_by_name("selected[]").click()
         # удаление первого контакта
@@ -30,6 +30,12 @@ class ContactHelper:
         # закрытие диалогового окна, в котором пользователь подтверждает удаление контакта
         wd.switch_to_alert().accept()
         # self.return_home_page()
+
+    def open_contact_home_page(self):
+        wd = self.app.wd
+        # if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
+        if not (len(wd.find_elements_by_name("MainForm")) > 0):
+            wd.find_element_by_link_text("home").click()
 
     def create(self, contacts):
         wd = self.app.wd
@@ -56,5 +62,6 @@ class ContactHelper:
 
     def count(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("home").click()
+        self.open_contact_home_page()
         return len(wd.find_elements_by_name("selected[]"))
+
