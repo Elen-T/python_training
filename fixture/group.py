@@ -28,8 +28,7 @@ class GroupHelper:
         wd.find_element_by_name("edit").click()
         # wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
         # wd.find_element_by_xpath("//tr[2]//td[8]//a[1]//img[1]]").click()
-        # заполнение
-
+        # заполнениt
         # нажатие Обновить
         wd.find_element_by_name("update").click()
         self.return_to_groups()
@@ -71,7 +70,6 @@ class GroupHelper:
             wd.find_element_by_name(field_name).send_keys(text)
 
     def open_groups_page(self):
-        # открытие страницы групп
         wd = self.app.wd
         if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
             # wd.find_element_by_link_text("add new").click()
