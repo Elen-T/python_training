@@ -3,20 +3,23 @@ from model.contacts import Contacts
 
 
 def test_add_contact(app):
-   app.contact.create(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
+    old_contacts = app.contact.get_contact_list()
+    app.contact.create(Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye"))
+    new_contacts = app.contact.get_contact_list()
+    assert len(old_contacts ) + 1 == len(new_contacts)
 
 
-   """def is_element_present(self, how, what):
+"""def is_element_present(self, how, what):
         try: self.wd.find_element(by=how, value=what)
         except NoSuchElementException as e: return False
         return True
     
-    def is_alert_present(self):
+      def is_alert_present(self):
         try: self.wd.switch_to_alert()
         except NoAlertPresentException as e: return False
         return True
     
-    def close_alert_and_get_its_text(self):
+      def close_alert_and_get_its_text(self):
         try:
             alert = self.wd.switch_to_alert()
             alert_text = alert.text

@@ -1,3 +1,5 @@
+from model.contacts import Contacts
+
 class ContactHelper:
 
     def __init__(self, app):
@@ -29,12 +31,14 @@ class ContactHelper:
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         # закрытие диалогового окна, в котором пользователь подтверждает удаление контакта
         wd.switch_to_alert().accept()
+        #ожидание загрузки элементов
+        wd.find_element_by_css_selector("div.msgbox")
         # self.return_home_page()
 
     def open_contact_home_page(self):
         wd = self.app.wd
         # if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
-        if not (len(wd.find_elements_by_name("MainForm")) > 0):
+        if not(wd.current_url.endswith("/addressbook") and len(wd.find_elements_by_name("MainForm")) > 0):
             wd.find_element_by_link_text("home").click()
 
     def create(self, contacts):
@@ -64,4 +68,20 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contact_home_page()
         return len(wd.find_elements_by_name("selected[]"))
+
+    # загрузка списка
+    def get_contact_list(self):
+        wd = self.app.wd
+        self.open_contact_home_page()
+        contacts = []
+        # находим все элементы, делаем по ним цикл
+        #for element in wd.find_elements_by_css_selector("tr.group"):
+        for element in wd.find_elements_by_name("entry"):
+            # получение текста, обращение к свойству
+            text = element.text
+            # получение идентификатора
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            # по text и id построение объекта типа контакт и добавление в список
+            contacts.append(Contacts(firstname=text, id=id))
+        return contacts
 
