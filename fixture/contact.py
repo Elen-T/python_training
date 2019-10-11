@@ -1,5 +1,6 @@
 from model.contacts import Contacts
 
+
 class ContactHelper:
 
     def __init__(self, app):
@@ -9,7 +10,7 @@ class ContactHelper:
         wd = self.app.wd
         wd.find_element_by_link_text("home page").click()
 
-    def edit_first_contact(self):
+    def edit_first_contact(self, contact):
         wd = self.app.wd
         self.open_contact_home_page()
         # выбор первого контакта
@@ -17,9 +18,24 @@ class ContactHelper:
         # нажатие редактировать первого контакта
         wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
         # wd.find_element_by_xpath("//tr[2]//td[8]//a[1]//img[1]]").click()
+        self.fill_form(contact)
         # нажатие Обновить
         wd.find_element_by_name("update").click()
         self.return_home_page()
+
+    def fill_form(self, contact):
+        wd = self.app.wd
+        self.change_field_value("firstname", contact.firstname)
+        self.change_field_value("middlename", contact.middlename)
+        self.change_field_value("lastname", contact.lastname)
+        self.change_field_value("nickname", contact.nickname)
+
+    def change_field_value(self, field_name, text):
+        wd = self.app.wd
+        if text is not None:
+            wd.find_element_by_name(field_name).click()
+            wd.find_element_by_name(field_name).clear()
+            wd.find_element_by_name(field_name).send_keys(text)
 
     def delete_first_contact(self):
         wd = self.app.wd
@@ -78,10 +94,12 @@ class ContactHelper:
         #for element in wd.find_elements_by_css_selector("tr.group"):
         for element in wd.find_elements_by_name("entry"):
             # получение текста, обращение к свойству
-            text = element.text
+            lastname_text = element.find_elements_by_tag_name("td")[1].text
+            firstname_text = element.find_elements_by_tag_name("td")[2].text
             # получение идентификатора
             id = element.find_element_by_name("selected[]").get_attribute("value")
             # по text и id построение объекта типа контакт и добавление в список
-            contacts.append(Contacts(firstname=text, id=id))
+            contacts.append(Contacts(lastname=lastname_text, firstname=firstname_text, id=id))
         return contacts
+
 

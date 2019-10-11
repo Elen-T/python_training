@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from model.group import Group
-from sys import maxsize
 
 
 def test_add_groupp2(app):
@@ -15,19 +14,16 @@ def test_add_groupp2(app):
     assert len(old_groups) + 1 == len(new_groups)
     # добавление группы в список
     old_groups.append(group)
-    # вычисление по группе ключа используемого для сравнения
-    def id_or_max(gr):
-        # если есть ид , то возвращается он
-        if gr.id:
-            return gr.id
-        else:
-            return maxsize
+
     # сравниваем отсортированные группы
-    assert sorted(old_groups) == sorted(new_groups)
+    assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max)
 
 
 def test_add_empty_groupp2(app):
     old_groups = app.group.get_group_list()
-    app.group.create(Group(name="", header="", footer=""))
+    group = Group(name="", header="", footer="")
+    app.group.create(group)
     new_groups = app.group.get_group_list()
     assert len(old_groups) + 1 == len(new_groups)
+    old_groups.append(group)
+    assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max)
