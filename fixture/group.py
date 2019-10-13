@@ -17,6 +17,7 @@ class GroupHelper:
         # удаление первой группы
         wd.find_element_by_name("delete").click()
         self.return_to_groups()
+        self.group_cache = None
 
     def select_first_group(self):
         wd = self.app.wd
@@ -48,6 +49,7 @@ class GroupHelper:
         # подтверждение обновления
         wd.find_element_by_name("update").click()
         self.return_to_groups()
+        self.group_cache = None
 
     def create(self, group):
         wd = self.app.wd
@@ -58,6 +60,7 @@ class GroupHelper:
         # сохранение группы
         wd.find_element_by_name("submit").click()
         self.return_to_groups()
+        self.group_cache = None # сброс кэша
 
     def fill_group_form(self, group):
         wd = self.app.wd
@@ -65,17 +68,17 @@ class GroupHelper:
         self.change_field_value("group_header", group.header)
         self.change_field_value("group_footer", group.footer)
 
-    def change_field_value(self, field_name, text):
+    def change_field_value(self, field_name, text): # проверка что значение кот собираемся ввести в поле ввода установлено т.е. не None
         wd = self.app.wd
-        if text is not None:
+        if text is not None: # если не выполняется условие, то выполнить:
             wd.find_element_by_name(field_name).click()
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
 
     def open_groups_page(self):
         wd = self.app.wd
+        # проверка, что находимся на нужной странице и не нужен переход
         if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
-            # wd.find_element_by_link_text("add new").click()
             wd.find_element_by_link_text("groups").click()
 
     def count(self):
@@ -83,17 +86,16 @@ class GroupHelper:
         self.open_groups_page()
         return len(wd.find_elements_by_name("selected[]"))
 
+    group_cache = None
+
     # загрузка списка
     def get_group_list(self):
-        wd = self.app.wd
-        self.open_groups_page()
-        groups = []
-        # находим все элементы, делаем по ним цикл
-        for element in wd.find_elements_by_css_selector("span.group"):
-            # получение текста, обращение к свойству
-            text = element.text
-            # получение идентификатора
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            # по text и id построение объекта типа групп и добавление в список
-            groups.append(Group(name=text, id=id))
-        return groups
+        if self.group_cache is None: # если кэш пустой, тогда нужно загрузить инфу из браузера
+            wd = self.app.wd
+            self.open_groups_page()
+            self.group_cache = []
+            for element in wd.find_elements_by_css_selector("span.group"):  # находим все элементы, делаем по ним цикл
+                text = element.text   # получение текста, обращение к свойству text
+                id = element.find_element_by_name("selected[]").get_attribute("value") # получение идентификатора
+                self.group_cache.append(Group(name=text, id=id))  # по text и id построение объекта типа групп и добавление в список
+        return list(self.group_cache) # возврат копии кэша (возврат получившегося сформированного списка)

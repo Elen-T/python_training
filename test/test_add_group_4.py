@@ -3,20 +3,14 @@
 from model.group import Group
 
 
-def test_add_groupp2(app):
-    # сохранение старого списка групп
-    old_groups = app.group.get_group_list()
-    group = Group(name="fgjfgj", header="fgjfgj", footer="fgjfgj")
-    app.group.create(group)
-    # получение нового списка групп
-    new_groups = app.group.get_group_list()
-    # проверка что новый список длиннее старого
-    assert len(old_groups) + 1 == len(new_groups)
-    # добавление группы в список
-    old_groups.append(group)
-
-    # сравниваем отсортированные группы
-    assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max)
+def test_add_groupp2(app): # app - фикстура параметр тест метода
+    old_groups = app.group.get_group_list()   # загрузка старого списка групп
+    group = Group(name="fgjfgj", header="fgjfgj", footer="fgjfgj") # локальная переменная, содержащая добавляемую группу
+    app.group.create(group) # создаем новую группу
+    assert len(old_groups) + 1 == app.group.count # проверка что новый список длиннее старого, метод count выступает в роле хэша
+    new_groups = app.group.get_group_list()  # получение нового списка групп из приложения, после того как в приложение была добавлена группа
+    old_groups.append(group) # старый список, в который сами добавили группу (append - в конец)
+    assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max) # сравниваем отсортированные группы по правилу key
 
 
 def test_add_empty_groupp2(app):
