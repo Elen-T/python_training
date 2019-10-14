@@ -10,19 +10,28 @@ class ContactHelper:
         wd = self.app.wd
         wd.find_element_by_link_text("home page").click()
 
-    def edit_first_contact(self, contact):
+    def edit_contact_by_index(self, index, new_data):
         wd = self.app.wd
         self.open_contact_home_page()
-        # выбор первого контакта
-        wd.find_element_by_name("selected[]").click()
-        # нажатие редактировать первого контакта
-        wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
+        self.select_contact_by_index(index)
+        wd.find_elements_by_name("entry")[index].find_element_by_xpath(".//img[@alt='Edit']").click()
+        # wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
         # wd.find_element_by_xpath("//tr[2]//td[8]//a[1]//img[1]]").click()
-        self.fill_form(contact)
-        # нажатие Обновить
+        self.fill_form(new_data)
         wd.find_element_by_name("update").click()
         self.return_home_page()
         self.contact_cache = None
+
+    def edit_first_contact(self):
+        self.edit_contact_by_index(0)
+
+    def select_contact_by_index(self,index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click() #выбор нужного среди всех чекбоксов по индексу
+
+    def select_first_contact(self):
+        wd = self.app.wd
+        wd.find_element_by_name("selected[]").click()
 
     def fill_form(self, contact):
         wd = self.app.wd
@@ -38,20 +47,21 @@ class ContactHelper:
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
 
-    def delete_first_contact(self):
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contact_home_page()
-        # выбор первого контакта
-        wd.find_element_by_name("selected[]").click()
+        self.select_contact_by_index(index)
         # удаление первого контакта
         # wd.find_element_by_name("Delete").click()
         wd.find_element_by_xpath("//input[@value='Delete']").click()
-        # закрытие диалогового окна, в котором пользователь подтверждает удаление контакта
-        wd.switch_to_alert().accept()
-        #ожидание загрузки элементов
-        wd.find_element_by_css_selector("div.msgbox")
+        wd.switch_to_alert().accept()  # закрытие диалогового окна, в котором пользователь подтверждает удаление контакта
+        wd.find_element_by_css_selector("div.msgbox")       # ожидание загрузки элементов
         # self.return_home_page()
         self.contact_cache = None
+
+    def delete_first_contact(self, index):
+        wd = self.app.wd
+        self.delete_contact_by_index(0)
 
     def open_contact_home_page(self):
         wd = self.app.wd
@@ -96,13 +106,11 @@ class ContactHelper:
             wd = self.app.wd
             self.open_contact_home_page()
             self.contact_cache = []
-            # находим все элементы, делаем по ним цикл
-            for element in wd.find_elements_by_name("entry"):
+            for element in wd.find_elements_by_name("entry"):  # находим все элементы, делаем по ним цикл
                 # получение текста, обращение к свойству
                 lastname_text = element.find_elements_by_tag_name("td")[1].text
                 firstname_text = element.find_elements_by_tag_name("td")[2].text
-                # получение идентификатора
-                id = element.find_element_by_name("selected[]").get_attribute("value")
+                id = element.find_element_by_name("selected[]").get_attribute("value")  # получение идентификатора
                 # по text и id построение объекта типа контакт и добавление в список
                 self.contact_cache.append(Contacts(lastname=lastname_text, firstname=firstname_text, id=id))
             return list(self.contact_cache)

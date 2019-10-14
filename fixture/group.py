@@ -11,13 +11,20 @@ class GroupHelper:
         wd.find_element_by_link_text("group page").click()
 
     def delete_first_group(self):
+        self.delete_group_by_index(0)
+
+    def delete_group_by_index(self, index):
         wd = self.app.wd
         self.open_groups_page()
-        self.select_first_group()
+        self.select_group_by_index(index)
         # удаление первой группы
         wd.find_element_by_name("delete").click()
         self.return_to_groups()
         self.group_cache = None
+
+    def select_group_by_index(self,index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click() #выбор нужного среди всех чекбоксов по индексу
 
     def select_first_group(self):
         wd = self.app.wd
@@ -37,19 +44,18 @@ class GroupHelper:
         wd.find_element_by_name("update").click()
         self.return_to_groups()
 
-    def modify_first_group(self, new_group_data):
+    def modify_group_by_index(self,index, new_group_data):
         wd = self.app.wd
         self.open_groups_page()
-        # выбор первой группы
-        self.select_first_group()
-        # открытие формы редактирования
-        wd.find_element_by_name("edit").click()
-        # заполнение формы
-        self.fill_group_form(new_group_data)
-        # подтверждение обновления
-        wd.find_element_by_name("update").click()
+        self.select_group_by_index(index)     # выбор случайной группы
+        wd.find_element_by_name("edit").click()  # открытие формы редактирования
+        self.fill_group_form(new_group_data)   # заполнение формы
+        wd.find_element_by_name("update").click()  # подтверждение обновления
         self.return_to_groups()
         self.group_cache = None
+
+    def modify_first_group(self):
+        self.modify_group_by_index(0)
 
     def create(self, group):
         wd = self.app.wd
