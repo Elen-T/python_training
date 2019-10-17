@@ -12,7 +12,7 @@ class SessionHelper: # помощник по работе с сессиями
         wd.find_element_by_name("pass").click()
         wd.find_element_by_name("pass").clear()
         wd.find_element_by_name("pass").send_keys(password)
-        wd.find_element_by_css_selector("input[type=\"submit\"]").click()
+        wd.find_element_by_css_selector('input[type="submit"]').click() # замена / \"submit\"
 
     def logout(self):
         wd = self.app.wd
@@ -25,7 +25,11 @@ class SessionHelper: # помощник по работе с сессиями
 
     def is_logged_in_as(self, username): # проверка, что вошли как нужный пользователь (по имени)
         wd = self.app.wd
-        return wd.find_element_by_xpath("html[1]/body[1]/div[1]/div[1]/form[1]/b[1]").text == "("+username+")"
+        return self.get_logged_user() == username
+
+    def get_logged_user(self) :
+         wd = self.app.wd
+         return wd.find_element_by_xpath("html[1]/body[1]/div[1]/div[1]/form[1]/b[1]").text[1:-1] # чтение текста из браузера кот содерит имя пользователя
 
     def ensure_logout(self): # опреция чтобы убедииться, что вышли из системы
         wd = self.app.wd

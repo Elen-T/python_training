@@ -22,7 +22,7 @@ class ContactHelper:
         self.return_home_page()
         self.contact_cache = None
 
-        
+
 
     def edit_first_contact(self):
         self.edit_contact_by_index(0)
@@ -103,19 +103,54 @@ class ContactHelper:
     contact_cache = None
 
     # загрузка списка
+    # @property
     def get_contact_list(self):
         if self.contact_cache is None:
             wd = self.app.wd
             self.open_contact_home_page()
             self.contact_cache = []
-            for element in wd.find_elements_by_name("entry"):  # находим все элементы, делаем по ним цикл
+            for row in wd.find_elements_by_name("entry"):  # находим все элементы, делаем по ним цикл
                 # получение текста, обращение к свойству
-                lastname_text = element.find_elements_by_tag_name("td")[1].text
-                firstname_text = element.find_elements_by_tag_name("td")[2].text
-                id = element.find_element_by_name("selected[]").get_attribute("value")  # получение идентификатора
-                # по text и id построение объекта типа контакт и добавление в список
-                self.contact_cache.append(Contacts(lastname=lastname_text, firstname=firstname_text, id=id))
-            return list(self.contact_cache)
+                cells = row.find_elements_by_tag_name("td")
+                lastname= cells[2].text
+                firstname = cells[1].text
+                #id = element.find_element_by_name("selected[]").get_attribute("value")  # получение идентификатора
+                id = cells[0].find_element_by_tag_name("input").get_attribute("value")
+                all_phones = cells[5].text.splitlines()  # из ячейки читаются только все телефоны, полученную строку разрезаем на части(берем текст из ячейки и делим на (text.splitlines))
+                self.contact_cache.append(Contacts(firstname=firstname, lastname=lastname, id=id, homephone=all_phones[0], mobilephone=all_phones[1],
+                                                   workphone=all_phones[2],secondaryphone=all_phones[3]))   # по text и id построение объекта типа контакт и добавление в список
+        return list(self.contact_cache)
+
+    def open_contact_to_edit_by_index(self, index):  # новый
+        wd = self.app.wd
+        self.open_contact_home_page()
+        # self.app.open_home_page()
+        row = wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[7]
+        cell.find_element_by_tag_name("a").click()
+
+    def open_contact_view_by_index(self,index): # новый
+        wd = self.app.wd
+        self.open_contact_home_page()
+        # self.app.open_home_page()
+        row =  wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[6]
+        cell.find_element_by_tag_name("a").click()
+
+    def get_contact_info_from_edit_page(self,index): # открываем форму редактирования, читаем из нее инфу
+        wd = self.app.wd
+        self.open_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        homephone = wd.find_element_by_name("home").get_attribute("value")
+        workphone = wd.find_element_by_name("work").get_attribute("value")
+        mobilephone = wd.find_element_by_name("mobile").get_attribute("value")
+        secondaryphone = wd.find_element_by_name("phone2").get_attribute("value")
+        return Contacts(firstname=firstname,lastname=lastname, id=id, homephone=homephone, workphone=workphone,
+                       mobilephone=mobilephone, secondaryphone=secondaryphone) # построение объекта из этих данных
+
+
 
 
 
