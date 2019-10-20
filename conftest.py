@@ -7,13 +7,15 @@ fixture = None # глобальная переменная для хранени
 @pytest.fixture
 def app(request): # функция инициализации фикстуры
     global fixture
+    browser = request.config.getoption("--browser")  # извлекаем параметр
+    base_url = request.config.getoption("--baseUrl")
     if fixture is None:
-        fixture = Application() # создание фикстуры (объект типа Application)
+        fixture = Application(browser=browser, base_url=base_url) # создание фикстуры (объект типа Application), здесь передается параметр browser, который задаетс\я в командной строке
         # проверка предусловия
         fixture.session.ensure_login(username="admin", password="secret")
     else:
         if not fixture.is_valid():
-            fixture = Application()
+            fixture = Application(browser=browser, base_url=base_url)
             fixture.session.login(username="admin", password="secret")
     return fixture
 
@@ -25,3 +27,7 @@ def stop(request):
         fixture.destroy()
     request.addfinalizer(fin)
     return fixture
+
+def pytest_addoption(parser): # спец хук, добавляет доп параметры которые можно указать при запуске питест из командной строки и впоследствии можем получить значение которое передано в этом параметре,
+    parser.addoption("--browser", action="store", default="firefox") # в параметре парсер передается парсер командной строки, у которого есть метод addoption
+    parser.addoption("--baseUrl", action="store", default="http://localhost/addressbook/")
