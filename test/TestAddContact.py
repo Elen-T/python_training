@@ -1,16 +1,34 @@
 # -*- coding: utf-8 -*-
 from model.contacts import Contacts
+import pytest
+import random
+import string
 
 
-def test_add_contact(app):
+def random_string(prefix,maxlen): #генерация случайных тест данных (prefix - слово с кот начинается строка,maxlen - мах длинна строки )
+    symbols=string.ascii_letters + string.digits + " " # это символы которые будут в случайно сгенерированной строке
+    return prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen)) ]) # random.choice случайным образом выбирает символ из строки случайной длинны - random.randrange(maxlen) (будет сгенерир случайн длинна не превыш мах) потом склеиваем этот список -"".join
+
+
+testdata =[     # описываем тестовые данные  в виде генерации комбинаций
+    Contacts(firstname=firstname, middlename=middlename, lastname=lastname, nickname=nickname)
+    for firstname in ["", random_string("firstname", 10)]
+    for middlename in ["", random_string("middlename", 20)]
+    for lastname in ["", random_string("lastname", 20)]
+    for nickname in ["", random_string("nickname", 20)]
+]
+
+
+@pytest.mark.parametrize("contact",testdata, ids=[repr(x) for x in testdata])
+def test_add_contact(app, contact):
     old_contacts = app.contact.get_contact_list()
-    contact = Contacts(firstname="esryewry", middlename="weywey", lastname="weywey", nickname="weywye",
-                       homephone="1111", mobilephone="2222", workphone="3333", secondaryphone="444")
     app.contact.create(contact)
     assert len(old_contacts ) + 1 == app.contact.count()
     new_contacts = app.contact.get_contact_list()
     old_contacts.append(contact)
     assert sorted(old_contacts, key=Contacts.id_or_max) == sorted(new_contacts, key=Contacts.id_or_max)
+
+
 
 """def is_element_present(self, how, what):
         try: self.wd.find_element(by=how, value=what)
