@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from model.group import Group
 import pytest
-from data.add_group import testdata # импорт тестовых данных из отдельного пакета
+from data.add_group import constant as testdata # импорт тестовых данных из отдельного пакета
 
 @pytest.mark.parametrize("group",testdata, ids=[repr(x) for x in testdata])# с помощью этой пометки тест фрейворк передает тест данные в кач параметра в тест (в ней указ название параметра,в который передаются тест данные- group, источник тест данных - testdata и текстовое представление данных - список ids  )
 def test_add_groupp2(app,group): # app - фикстура параметр тест метода, тестовые данные передаем в кач параметра теста
