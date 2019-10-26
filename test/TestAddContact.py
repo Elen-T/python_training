@@ -5,18 +5,9 @@ import random
 import string
 
 
-def random_string(prefix,maxlen): #генерация случайных тест данных (prefix - слово с кот начинается строка,maxlen - мах длинна строки )
-    symbols=string.ascii_letters + string.digits + " " # это символы которые будут в случайно сгенерированной строке
-    return prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen)) ]) # random.choice случайным образом выбирает символ из строки случайной длинны - random.randrange(maxlen) (будет сгенерир случайн длинна не превыш мах) потом склеиваем этот список -"".join
-
-
-testdata =[ Contacts(firstname="", middlename="", lastname="", nickname="")] +[  # описываем тестовые данные (1 группа с пустыми данными и неск с непустыми )
-    Contacts(firstname=random_string("firstname",10), middlename=random_string("middlename",20) , lastname=random_string("lastname",20) , nickname=random_string("nickname",20)  )
-    for i in range(5)]# будет сгенерирован объект Group, содержащийслучайные данные, 5 раз и из этих сгенерированных объектов будет построен список
-
-
-@pytest.mark.parametrize("contact",testdata, ids=[repr(x) for x in testdata])
-def test_add_contact(app, contact):
+#@pytest.mark.parametrize("contact",testdata, ids=[repr(x) for x in testdata])
+def test_add_contact(app, json_contacts):
+    contact=json_contacts
     old_contacts = app.contact.get_contact_list()
     app.contact.create(contact)
     assert len(old_contacts ) + 1 == app.contact.count()

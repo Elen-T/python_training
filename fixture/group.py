@@ -74,6 +74,7 @@ class GroupHelper:
         self.change_field_value("group_header", group.header)
         self.change_field_value("group_footer", group.footer)
 
+
     def change_field_value(self, field_name, text): # проверка что значение кот собираемся ввести в поле ввода установлено т.е. не None
         wd = self.app.wd
         if text is not None: # если не выполняется условие, то выполнить:

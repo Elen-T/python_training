@@ -2,6 +2,8 @@ import pytest
 import json
 from fixture.application import Application
 import os.path
+import importlib
+import jsonpickle
 
 fixture = None # глобальная переменная для хранения фикстуры между вызовами
 target = None
@@ -32,3 +34,23 @@ def stop(request):
 def pytest_addoption(parser): # спец хук, добавляет доп параметры которые можно указать при запуске питест из командной строки и впоследствии можем получить значение которое передано в этом параметре,
     parser.addoption("--browser", action="store", default="firefox") # в параметре парсер передается парсер командной строки, у которого есть метод addoption
     parser.addoption("--target", action="store", default="target.json") # хранение конфигурации в формате json
+
+# Ещё один способ параметризации тестов: динамическая генерация тестов
+# НЕ использовать....
+def pytest_generate_tests(metafunc): #matafunc - спец объект для получения инфы о тестовой функции
+    for fixture in metafunc.fixturenames: #проход по всем параметрам, но интересуют те кот начинаются с data_
+        if fixture.startswith("data_"):
+            testdata = load_from_module(fixture[5:]) # как только встретилась такая фикстура, загружаем тест данные из модуля fixture, 5: - удаление 5 символов
+            metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])#используем загруженные тестовые данные чтобы параметризовать тест функцию, параметры подставляются в качестве значения фикстуры, ids - строковое представление
+        elif fixture.startswith("json_"):
+            testdata = load_from_json(fixture[ 5:])  # как только встретилась такая фикстура, загружаем тест данные из json файла, 5: - удаление 5 символов
+            metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])  # используем загруженные тестовые данные чтобы параметризовать тест функцию, параметры подставляются в качестве значения фикстуры, ids - строковое представление
+
+
+def load_from_module (module): #загрузка данных из модуля\
+    return importlib.import_module("data.%s" % module).testdata # после того как моодуль импортирован нужно взять из него testdata
+
+
+def load_from_json (file): #загрузка данных из
+    with open (os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f: # строим путь к файлу, берем путь к текущему файлу, получаем директорию в кот он находится
+        return jsonpickle.decode(f.read()) # после открытия читаем из него данные и перекодируем с помощью jsonpickle в вид набора объектов питон
