@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 from model.contacts import Contacts
-import pytest
-import random
-import string
-
 
 #@pytest.mark.parametrize("contact",testdata, ids=[repr(x) for x in testdata])
 def test_add_contact(app, json_contacts):

@@ -4,24 +4,37 @@ from fixture.application import Application
 import os.path
 import importlib
 import jsonpickle
+from fixture.db import DbFixture
 
 fixture = None # глобальная переменная для хранения фикстуры между вызовами
 target = None
 
+def load_config(file):  # вспомогат функция для загрузки # код загрузки в конфигурацию
+    global target
+    if target is None:  # если не определен target, то загружаем конфигурацию из файла
+        config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file)  # config_file- путь к файлу file встроенная переменная, которая содержит путь к текущему файлу, используем для задания пути открытия файла конфигурации, os.path.abspath - преобразование пути в абсолютный, os.path.dirname - определение директории в кот находится файл, os.path.join - присоединяем к этому пути абс путь до файла target.json
+        with open(config_file) as f:  # читаем файлы , f  - объект кот указывает на открытый файл
+            target = json.load(f)
+    return target
+
 @pytest.fixture
 def app(request): # функция инициализации фикстуры
     global fixture
-    global target
     browser = request.config.getoption("--browser")  # извлекаем параметр
-    if target is None: # если не определен target, то загружаем конфигурацию из файла
-        config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), request.config.getoption("--target"))  #config_file- путь к файлу file встроенная переменная, которая содержит путь к текущему файлу, используем для задания пути открытия файла конфигурации, os.path.abspath - преобразование пути в абсолютный, os.path.dirname - определение директории в кот находится файл, os.path.join - присоединяем к этому пути абс путь до файла target.json
-        with open (config_file) as f: # читаем файлы , f  - объект кот указывает на открытый файл
-            target = json.load(f)
+    web_config = load_config( request.config.getoption("--target")['web'])
     if fixture is None or not fixture.is_valid(): # если фикст не определена или не валидная, тогда ее надо создавать
-        fixture = Application(browser=browser, base_url=target["baseUrl"]) # создание фикстуры (объект типа Application), здесь передается параметр browser, который задаетс\я в командной строке
-    fixture.session.ensure_login(username=target['username'], password=target['password'])
+        fixture = Application(browser=browser, base_url=web_config["baseUrl"]) # создание фикстуры (объект типа Application), здесь передается параметр browser, который задаетс\я в командной строке
+    fixture.session.ensure_login(username=web_config['username'], password=web_config['password'])
     return fixture
 
+@pytest.fixture(scope="session") # инициалзируем 1 раз в начале сессии и в конце останавливаем
+def db (request): #Фикстура для взаимодействия с БД, request содержит инфу об опциях переданных при запуске фреймворка
+    db_config = load_config(request.config.getoption("--target")['db'])
+    dbfixture = DbFixture(host=db_config['host'], name=db_config['name'], user=db_config['user'],password=db_config['password']) # инициализируем не соединение, а свой класс
+    def fin (): # объявляем для него финализацию
+        dbfixture.destroy()
+        request.addfinalizer(fin)
+    return dbfixture
 
 @pytest.fixture(scope="session", autouse=True) # отдельная фикстура для финализации, должна выполняться в самом конце, тк указано свойство autouse=True
 def stop(request):
