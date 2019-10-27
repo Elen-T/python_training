@@ -1,4 +1,4 @@
-import pymysql.cursors
+import pymysql
 from model.group import Group
 
 class DbFixture:

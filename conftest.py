@@ -21,15 +21,15 @@ def load_config(file):  # вспомогат функция для загруз�
 def app(request): # функция инициализации фикстуры
     global fixture
     browser = request.config.getoption("--browser")  # извлекаем параметр
-    web_config = load_config( request.config.getoption("--target")['web'])
+    web_config = load_config( request.config.getoption("--target"))['web']
     if fixture is None or not fixture.is_valid(): # если фикст не определена или не валидная, тогда ее надо создавать
-        fixture = Application(browser=browser, base_url=web_config["baseUrl"]) # создание фикстуры (объект типа Application), здесь передается параметр browser, который задаетс\я в командной строке
+        fixture = Application(browser=browser, base_url=web_config['baseUrl']) # создание фикстуры (объект типа Application), здесь передается параметр browser, который задаетс\я в командной строке
     fixture.session.ensure_login(username=web_config['username'], password=web_config['password'])
     return fixture
 
 @pytest.fixture(scope="session") # инициалзируем 1 раз в начале сессии и в конце останавливаем
 def db (request): #Фикстура для взаимодействия с БД, request содержит инфу об опциях переданных при запуске фреймворка
-    db_config = load_config(request.config.getoption("--target")['db'])
+    db_config = load_config(request.config.getoption("--target"))['db']
     dbfixture = DbFixture(host=db_config['host'], name=db_config['name'], user=db_config['user'],password=db_config['password']) # инициализируем не соединение, а свой класс
     def fin (): # объявляем для него финализацию
         dbfixture.destroy()
