@@ -17,8 +17,7 @@ class Group:
 
     # вычисление по группе ключа используемого для сравнения
     def id_or_max(self):
-        # если есть ид , то возвращается он
         if self.id:
-            return int(self.id)
+            return int(self.id)  # если есть ид , то возвращается он
         else:
             return maxsize     # если нет ид , то возвращается мах число

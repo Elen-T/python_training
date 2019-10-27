@@ -8,7 +8,7 @@ class GroupHelper:
 
     def return_to_groups(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("group.py page").click()
+        wd.find_element_by_link_text("groups").click()
 
     def delete_first_group(self):
         self.delete_group_by_index(0)
@@ -85,7 +85,7 @@ class GroupHelper:
     def open_groups_page(self):
         wd = self.app.wd
         # проверка, что находимся на нужной странице и не нужен переход
-        if not (wd.current_url.endswith("/group.py.php") and len(wd.find_elements_by_name("new")) > 0):
+        if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
             wd.find_element_by_link_text("groups").click()
 
     def count(self):
@@ -101,7 +101,7 @@ class GroupHelper:
             wd = self.app.wd
             self.open_groups_page()
             self.group_cache = []
-            for element in wd.find_elements_by_css_selector("span.group.py"):  # находим все элементы, делаем по ним цикл
+            for element in wd.find_elements_by_css_selector("span.group"):  # находим все элементы, делаем по ним цикл
                 text = element.text   # получение текста, обращение к свойству text
                 id = element.find_element_by_name("selected[]").get_attribute("value") # получение идентификатора
                 self.group_cache.append(Group(name=text, id=id))  # по text и id построение объекта типа групп и добавление в список

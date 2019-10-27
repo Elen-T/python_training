@@ -14,10 +14,10 @@ class DbFixture:
         list = []  # список для объекта
         cursor = self.connection.cursor() # запрос к бд на скл
         try:
-            cursor.execute("select group_id,group_name, group_header, group_footer from group_list") #выполнение запроса
+            cursor.execute("select group_id, group_name, group_header, group_footer from group_list") #выполнение запроса
             for row in cursor:
                 (id, name, header, footer) = row # тк каждая из строк таблицы это кортеж, т.е. присвоить значения сразу в 4 перременные
-                list.append(Group(id=id,name=name, header=header,footer=footer ))# строим новый объект  и помещаем его в список
+                list.append(Group(id=str(id),name=name, header=header,footer=footer ))# строим новый объект  и помещаем его в список
         finally:   # закрытие запроса
             cursor.close()
         return list
