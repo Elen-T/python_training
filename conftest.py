@@ -33,7 +33,7 @@ def db (request): #Фикстура для взаимодействия с БД,
     dbfixture = DbFixture(host=db_config['host'], name=db_config['name'], user=db_config['user'],password=db_config['password']) # инициализируем не соединение, а свой класс
     def fin (): # объявляем для него финализацию
         dbfixture.destroy()
-        request.addfinalizer(fin)
+    request.addfinalizer(fin)
     return dbfixture
 
 @pytest.fixture(scope="session", autouse=True) # отдельная фикстура для финализации, должна выполняться в самом конце, тк указано свойство autouse=True
