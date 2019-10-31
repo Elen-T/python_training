@@ -44,9 +44,15 @@ def stop(request):
     request.addfinalizer(fin)
     return fixture
 
+@pytest.fixture
+def check_ui(request): #request параметр для получения доступа к опциям
+    return request.config.getoption("--check_ui") # проверяем наличие опции --check_ui тип булевский (выставляетсяв конфигурации теста)
+
 def pytest_addoption(parser): # спец хук, добавляет доп параметры которые можно указать при запуске питест из командной строки и впоследствии можем получить значение которое передано в этом параметре,
     parser.addoption("--browser", action="store", default="firefox") # в параметре парсер передается парсер командной строки, у которого есть метод addoption
     parser.addoption("--target", action="store", default="target.json") # хранение конфигурации в формате json
+    parser.addoption("--check_ui", action="store_true") # при действии store_true автоматически указывается true если она присутствует и false если отсутствует
+
 
 # Ещё один способ параметризации тестов: динамическая генерация тестов
 # НЕ использовать....
