@@ -1,5 +1,10 @@
+from model.contacts import Contacts
 import re
 
+def test_phones_on_home_page_db(app,db): # тест читает данные с главной страницы,  сравнивает с бд
+    contact_from_home_page=app.contact.get_contact_list() # объект кот прочитали с главной страницы
+    contact_from_db = db.get_contact_list()
+    assert sorted(contact_from_home_page, key=Contacts.id_or_max)==sorted(contact_from_db, key=Contacts.id_or_max)
 
 def test_phones_on_home_page(app): # тест читает данные с главной страницы, режет на части и сравнивает с формой редактирования
     contact_from_home_page=app.contact.get_contact_list()[0] # объект кот прочитали с главной страницы, проверка для 1го контакта (индекс 0)
