@@ -2,7 +2,7 @@
 from model.group import Group
 from data.groups import testdata # импорт тестовых данных из отдельного пакета
 
-def test_add_groupp2(app, db, json_groups): #
+def test_add_groupp2(app, db, json_groups): # добавлена параметризация, читает данные изфайла groups.json
         group=json_groups
         old_groups = db.get_group_list()  # загрузка старого списка групп из бд
         app.group.create(group) # создаем новую группу

@@ -8,7 +8,7 @@ def test_group_list(app, db):  # передаем два параметра app 
     def clean(group):  # удляем лишние пробелы в начале и конце, после применения этой ф-ии объекты в обоих случаях д выглядеть одинаково
          return Group(id=group.id, name=group.name.strip())
     print(timeit(lambda: map(clean, db.get_group_list()), number=1000))  # список загруженный через бд, применяем к списку функцию clean
-    assert False #False - чтобы тест упал # sorted(ui_list, key=Group.id_or_max) == sorted(db_list,key=Group.id_or_max)  # проверка отсортированных списков
+    #assert False #False - чтобы тест упал и получитьвывод на консоль # sorted(ui_list, key=Group.id_or_max) == sorted(db_list,key=Group.id_or_max)  # проверка отсортированных списков
 
 
 

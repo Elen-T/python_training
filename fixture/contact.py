@@ -22,6 +22,18 @@ class ContactHelper:
         self.return_home_page()
         self.contact_cache = None
 
+    def edit_contact_by_id(self, contact, id):
+        wd = self.app.wd
+        self.open_contact_home_page()
+        #self.select_contact_by_id(id)
+        wd.get("http://localhost/addressbook/edit.php?id={0}".format(id))
+        #wd.find_elements_by_name("entry")[id].find_element_by_xpath(".//img[@alt='Edit']").click()
+        #wd.find_elements_by_xpath(".//img[@alt='Edit']").click()
+        #wd.find_elements_by_css_selector("img[alt=\"Edit\"]").click()
+        self.fill_form(contact)
+        wd.find_element_by_name("update").click()
+        self.return_home_page()
+        self.contact_cache = None
 
 
     def edit_first_contact(self):
@@ -30,6 +42,10 @@ class ContactHelper:
     def select_contact_by_index(self,index):
         wd = self.app.wd
         wd.find_elements_by_name("selected[]")[index].click() #выбор нужного среди всех чекбоксов по индексу
+
+    def select_contact_by_id (self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
 
     def select_first_contact(self):
         wd = self.app.wd
@@ -48,6 +64,16 @@ class ContactHelper:
             wd.find_element_by_name(field_name).click()
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
+
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        self.open_contact_home_page()
+        self.select_contact_by_id(id)
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.switch_to_alert().accept()  # закрытие диалогового окна, в котором пользователь подтверждает удаление контакта
+        wd.find_element_by_css_selector("div.msgbox")  # ожидание загрузки элементов
+        # self.return_home_page()
+        self.contact_cache = None
 
     def delete_contact_by_index(self, index):
         wd = self.app.wd
@@ -168,5 +194,4 @@ class ContactHelper:
         secondaryphone = re.search("P: (.*)", text).group(1)
         return Contacts(homephone=homephone, mobilephone=mobilephone, workphone=workphone,
                         secondaryphone=secondaryphone)  # построение объекта из этих данных
-
 
