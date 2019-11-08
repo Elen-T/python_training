@@ -29,6 +29,7 @@ class ContactHelper:
         wd.get("http://localhost/addressbook/edit.php?id={0}".format(id))
         #wd.find_elements_by_name("entry")[id].find_element_by_xpath(".//img[@alt='Edit']").click()
         #wd.find_elements_by_xpath(".//img[@alt='Edit']").click()
+        #wd.find_element_by_xpath(".//a[@href='edit.php?id=%s']" % id).click()
         #wd.find_elements_by_css_selector("img[alt=\"Edit\"]").click()
         self.fill_form(contact)
         wd.find_element_by_name("update").click()
