@@ -23,6 +23,13 @@ class ORMFixture:
         id = PrimaryKey(int, column='id')
         firstname = Optional(str, column='firstname')
         lastname = Optional(str, column='lastname')
+        #home= Optional(str, column='home')
+        #mobile = Optional(str, column='mobile')
+        #work = Optional(str, column='work')
+        #fax = Optional(str, column='fax')
+        #email = Optional(str, column='email')
+        #email2 = Optional(str, column='email2')
+        #email3 = Optional(str, column='email3')
         deprecated = Optional(datetime, column='deprecated')# свойство необходимое для фильтрации
         groups = Set(lambda: ORMFixture.ORMGroup,  table="address_in_groups", column="group_id",  reverse="contacts", lazy=True)
 
@@ -59,3 +66,4 @@ class ORMFixture:
         orm_group=list(select (g for g in ORMFixture.ORMGroup if g.id ==group.id))[0]# у возвращенного списка берем 1ый элемент
         return self.convert_contacts_to_model(
             select(c for c in ORMFixture.ORMContact if c.deprecated is None and orm_group not in c.groups)) # выборка из объектов данного класса, преобразованная в список
+

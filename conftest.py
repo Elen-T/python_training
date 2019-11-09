@@ -5,6 +5,7 @@ import os.path
 import importlib
 import jsonpickle
 from fixture.db import DbFixture
+from fixture.orm import ORMFixture
 
 fixture = None # глобальная переменная для хранения фикстуры между вызовами
 target = None
@@ -73,3 +74,4 @@ def load_from_module (module): #загрузка данных из модуля\
 def load_from_json (file): #загрузка данных из
     with open (os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f: # строим путь к файлу, берем путь к текущему файлу, получаем директорию в кот он находится
         return jsonpickle.decode(f.read()) # после открытия читаем из него данные и перекодируем с помощью jsonpickle в вид набора объектов питон
+

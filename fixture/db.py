@@ -37,19 +37,34 @@ class DbFixture:
         return list
 
     def get_contact_by_id(self, id_cont):
-        global contact_sel
+        list_cont = []
         cursor = self.connection.cursor()
         try:
             cursor.execute("select id, firstname, lastname, address, mobile, home, work, phone2, email, email2, email3 "
                            "from addressbook where deprecated = '0000-00-00 00:00:00' and id='%s'" % id_cont)
             for row in cursor:
                 (id, firstname, lastname, address, mobile, home, work, phone2, email, email2, email3) = row
-                contact_sel = (Contacts(id=str(id), firstname=firstname, lastname=lastname, address=address,
-                                        mobile=mobile, work=work, phone2=phone2, email=email, email2=email2,
+                list_cont.append(Contacts(id=str(id), firstname=firstname, lastname=lastname, address=address,
+                                        mobile=mobile, home=home, work=work, phone2=phone2, email=email, email2=email2,
                                         email3=email3))
         finally:
             cursor.close()
-        return contact_sel
+        return list_cont
 
     def destroy(self):
         self.connection.close() # разрываем соединение
+
+    def get_groups_with_contacts(self):
+        list = []
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("select group_id from address_in_groups")
+            for row in cursor:
+                (id) = row
+                list.append(Group(id=str(id)))
+        finally:
+            cursor.close()
+        return list
+
+
+
