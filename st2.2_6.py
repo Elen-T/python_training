@@ -60,7 +60,7 @@ browser.get("http://suninjuly.github.io/wait2.html")
 button = WebDriverWait(browser, 5).until(
     EC.text_to_be_present_in_element_value((By.ID, "price"))
 )
-if button.text = 100
+if button.text = 1000
     button.click()
 message = browser.find_element_by_id("verify_message")
 
