@@ -16,12 +16,28 @@ def test_add_contact_to_group(app, db):
     contacts_in_group = dbase.get_contacts_in_group(group)
     contact_list = db.get_contact_list()
     contact = random.choice(contact_list)
-    if contact in contacts_in_group:
-        app.contact.remove_contact_from_group(contact, group)
-        contacts_in_group = dbase.get_contacts_in_group(group)
+    #if contact in contacts_in_group:
+     #   app.contact.remove_contact_from_group(contact, group)
+      #  contacts_in_group = dbase.get_contacts_in_group(group)
     app.contact.add_contact_to_group(contact, group)
     contacts_in_group.append(contact)
     assert sorted(contacts_in_group, key=Contacts.id_or_max) == sorted(dbase.get_contacts_in_group(group), key=Contacts.id_or_max)
+
+def test_del_contact_from_group3(app):
+    if len(dbase.get_group_list()) == 0:
+        app.group.create(Group(name="1TestGroup"))
+    group = random.choice(dbase.get_group_list())
+    contact = random.choice(dbase.get_contact_list())
+    if len(dbase.get_contacts_in_group(group)) == 0:
+        app.contact.add_contact_to_group(contact.id, group.id)
+    old_contacts_in_group = dbase.get_contacts_in_group(group)
+    app.contact.delete_contact_from_group(contact.id, group.id)
+    old_contacts_in_group.remove(contact)
+    new_contacts_from_group = dbase.get_contacts_in_group(group)
+
+    assert sorted(old_contacts_in_group, key=Contacts.id_or_max) == sorted(new_contacts_from_group,
+                                                                          key=Contacts.id_or_max)
+
 
 def test_del_contact_from_group(app, db):
     if len(db.get_contact_list()) == 0:

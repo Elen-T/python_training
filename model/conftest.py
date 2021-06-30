@@ -37,7 +37,7 @@ def db (request): #Фикстура для взаимодействия с БД,
     request.addfinalizer(fin)
     return dbfixture
 
-@pytest.fixture(scope="session", autouse=True) # отдельная фикстура для финализации, должна выполняться в самом конце, тк указано свойство autouse=True
+#@pytest.fixture(scope="session", autouse=True) # отдельная фикстура для финализации, должна выполняться в самом конце, тк указано свойство autouse=True
 def stop(request):
     def fin():
         fixture.session.ensure_logout()
@@ -75,3 +75,9 @@ def load_from_json (file): #загрузка данных из
     with open (os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f: # строим путь к файлу, берем путь к текущему файлу, получаем директорию в кот он находится
         return jsonpickle.decode(f.read()) # после открытия читаем из него данные и перекодируем с помощью jsonpickle в вид набора объектов питон
 
+
+@pytest.fixture(scope="session")
+def orm(request):
+    orm_config = load_config(request.config.getoption("--target"))['orm']
+    ormfixture = ORMFixture(host=orm_config['host'], name=orm_config['name'], user=orm_config['user'], password=orm_config['password'])
+    return ormfixture

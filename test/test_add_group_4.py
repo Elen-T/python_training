@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import allure
+import pytest
+
 from model.group import Group
 from data.groups import testdata # импорт тестовых данных из отдельного пакета
 

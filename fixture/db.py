@@ -19,7 +19,7 @@ class DbFixture:
             cursor.execute("select group_id, group_name, group_header, group_footer from group_list") #выполнение запроса
             for row in cursor:
                 (id, name, header, footer) = row # тк каждая из строк таблицы это кортеж, т.е. присвоить значения сразу в 4 перременные
-                list.append(Group(id=str(id),name=name, header=header,footer=footer ))# строим новый объект  и помещаем его в список
+                list.append(Group(id=id,name=name, header=header,footer=footer ))# строим новый объект  и помещаем его в список
         finally:   # закрытие запроса
             cursor.close()
         return list
@@ -32,6 +32,7 @@ class DbFixture:
             for row in cursor:
                 (id, firstname, lastname) = row  # тк каждая из строк таблицы это кортеж, т.е. присвоить значения сразу в 4 перременные
                 list.append(Contacts(id=str(id), firstname=firstname, lastname=	lastname))  # строим новый объект  и помещаем его в список
+       #id=str(id)
         finally:  # закрытие запроса
             cursor.close()
         return list
@@ -60,7 +61,7 @@ class DbFixture:
         try:
             cursor.execute("select group_id from address_in_groups")
             for row in cursor:
-                (id) = row
+                (id,) = row
                 list.append(Group(id=str(id)))
         finally:
             cursor.close()
